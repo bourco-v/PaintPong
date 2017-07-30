@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using Es.InkPainter;
 using UnityEngine;
 
+public class OnCollisionWithPaddleEvent : GameEvent { }
+
 public class Paddle : MonoBehaviour {
 
 	public EPlayerColor PlayerColor;
@@ -17,14 +19,17 @@ public class Paddle : MonoBehaviour {
 	{
 		ballPainter.SetColor(Brush.Color, PlayerColor);
 		var force = CalculateBounceDirection(ballPainter.transform);
+		ballPainter.RigidBody.velocity = Vector3.zero;
 		ballPainter.RigidBody.AddForce(force, ForceMode);
+		Events.Instance.Raise(new OnBallBounceEvent());
+		Events.Instance.Raise(new OnCollisionWithPaddleEvent());
 	}
 
 	Vector3 CalculateBounceDirection(Transform ball)
 	{
 		Vector3 force = Force;
 
-		force.x = (ball.position.x - this.transform.position.x) * OrientationScale;
+		force.x = Mathf.Clamp(((ball.position.x - this.transform.position.x) * OrientationScale), -8f, 8f); // Clamp to avoid too slow shots covering the whole area
 
 		return (force);
 	}

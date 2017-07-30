@@ -5,6 +5,9 @@ using Es.InkPainter;
 using Es.InkPainter.Sample;
 using UnityEngine;
 
+public class OnCollisionWithWallEvent : GameEvent { }
+public class OnExplosionEvent : GameEvent { }
+
 public class BallPainter : CollisionPainter {
 
 	public static BallPainter Instance
@@ -64,20 +67,28 @@ public class BallPainter : CollisionPainter {
 		}
 	}
 
+	void OnTriggerEnter(Collider collider)
+	{
+		var paddle = collider.GetComponent<Paddle>();
+		if (paddle != null)
+		{
+			paddle.OnCollisionWithBall(this);
+			SetColor();
+		}
+	}
+
 	void OnCollisionEnter(Collision collision)
 	{
 		for (int i = 0; i < collision.contacts.Length; ++i)
 		{
-			var paddle = collision.contacts[i].otherCollider.GetComponent<Paddle>();
 			var explosionWall = collision.contacts[i].otherCollider.GetComponent<ExplodeOnMapOnBallTouch>();
-			if (paddle != null)
-			{
-				paddle.OnCollisionWithBall(this);
-				SetColor();
-			}
 			if (explosionWall != null)
 			{
 				explosionWall.Explode();
+			}
+			else
+			{
+				Events.Instance.Raise(new OnCollisionWithWallEvent());
 			}
 		}
 	}

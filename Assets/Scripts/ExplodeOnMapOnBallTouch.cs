@@ -15,5 +15,7 @@ public class ExplodeOnMapOnBallTouch : MonoBehaviour {
 		var ball = BallPainter.Instance;
 		ball.SetColor(ExplosionBrush.Color, Color);
 		_floor.Paint(ExplosionBrush, BallPainter.Instance.transform.position);
+		Events.Instance.Raise(new OnBallBounceEvent());
+		Events.Instance.Raise(new OnExplosionEvent());
 	}
 }

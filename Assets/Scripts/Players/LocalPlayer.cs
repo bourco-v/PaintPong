@@ -30,7 +30,9 @@ public class LocalPlayer : APlayer {
 		var worldPosition = Camera.main.ScreenToWorldPoint(new Vector3(screenPos.x, screenPos.y, 0));
 		if (TouchedNearPaddle(worldPosition) == true)
 		{
-			MovePaddle(worldPosition.x - Paddle.transform.position.x);
+			var position = Paddle.transform.position;
+			position.x = worldPosition.x;
+			MovePaddle(position);
 		}
 	}
 

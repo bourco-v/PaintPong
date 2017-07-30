@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class OnGameStartEvent : GameEvent { }
 public class OnGameEndEvent : GameEvent { }
+public class OnBallBounceEvent : GameEvent { }
 
 public abstract class APlayer : MonoBehaviour {
 	public enum EPlayerType
@@ -19,7 +20,7 @@ public abstract class APlayer : MonoBehaviour {
 	public Paddle Paddle;
 	bool _freezePlayer = true;
 
-	Vector3 basePosition;
+	protected Vector3 basePosition { get; private set; }
 
 	void OnEnable()
 	{
@@ -61,16 +62,17 @@ public abstract class APlayer : MonoBehaviour {
 		return (_freezePlayer == false);
 	}
 
-	public void MovePaddle(float force)
+	public void MovePaddle(Vector3 position)
 	{
 		if (CanMove() == true)
 		{
-			if (Mathf.Abs(force) > Paddle.transform.localScale.x / 6f) // If touching really close to the position, do not move
-			{
-				Vector3 forceVector = Vector3.zero;
-				forceVector.x = 1f * (force > 0f ? 1f : -1f);
-				Paddle.transform.position = Paddle.transform.position + (forceVector * Time.deltaTime * Paddle.Speed);
-			}
+			Paddle.transform.position = position;
+			//if (Mathf.Abs(force) > Paddle.transform.localScale.x / 6f) // If touching really close to the position, do not move
+			//{
+			//	Vector3 forceVector = Vector3.zero;
+			//	forceVector.x = 1f * (force > 0f ? 1f : -1f);
+			//	Paddle.transform.position = Paddle.transform.position + (forceVector * Time.deltaTime * Paddle.Speed);
+			//}
 		}
 	}
 }

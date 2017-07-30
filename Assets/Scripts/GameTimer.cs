@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class OnStateChangedEvent : GameEvent {
 	public EGameState State;
 }
+public class OnTimerEvent : GameEvent { }
 
 public enum EGameState
 {
@@ -18,12 +19,13 @@ public enum EGameState
 
 public class GameTimer : MonoBehaviour {
 
-	const float BEFORE_GAME_TIMER = 3f;
-	const float GAME_TIMER = 90f;
+	const float BEFORE_GAME_TIMER = 2f;
+	const float GAME_TIMER = 30f;
 	const float AFTER_GAME_TIMER = 6f;
 
 	public List<Text> Timers = new List<Text>();
 	float _timer;
+	float _countDownTimer = 1f;
 	public EGameState State = EGameState.None;
 	
 
@@ -32,8 +34,19 @@ public class GameTimer : MonoBehaviour {
 		switch (State)
 		{
 			case EGameState.BeforeGame:
+				_countDownTimer -= Time.deltaTime;
+				if (_countDownTimer <= 0f)
+				{
+					Events.Instance.Raise(new OnTimerEvent());
+					_countDownTimer = 1f;
+				}
+				_timer -= Time.deltaTime;
+				if (_timer < 0f)
+					NextState();
+				break;
 			case EGameState.Game:
 			case EGameState.AfterGame:
+				_countDownTimer -= Time.deltaTime;
 				_timer -= Time.deltaTime;
 				if (_timer < 0f)
 					NextState();
@@ -56,6 +69,7 @@ public class GameTimer : MonoBehaviour {
 			case EGameState.BeforeGame:
 				State = EGameState.Game;
 				_timer = GAME_TIMER;
+				Events.Instance.Raise(new OnTimerEvent());
 				Events.Instance.Raise(new OnGameStartEvent());
 				break;
 			case EGameState.Game:
@@ -70,6 +84,8 @@ public class GameTimer : MonoBehaviour {
 			case EGameState.None:
 				State = EGameState.BeforeGame;
 				_timer = BEFORE_GAME_TIMER;
+				_countDownTimer = 1f;
+				Events.Instance.Raise(new OnTimerEvent());
 				break;
 		}
 		ShowTimer();
