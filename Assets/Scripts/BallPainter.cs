@@ -42,7 +42,7 @@ public class BallPainter : CollisionPainter {
 
 	void HandleOnGameStart(OnGameStartEvent e)
 	{
-		CurrentPlayerColor = EPlayerColor.None;
+		SetColor(Color.white, EPlayerColor.None);
 	}
 
 	public void SetColor(Color color, EPlayerColor playerColor)
